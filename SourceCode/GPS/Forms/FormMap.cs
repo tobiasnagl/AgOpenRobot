@@ -38,7 +38,7 @@ namespace AgOpenGPS
             };
 
             cmbTileServers.Items.AddRange(tileServers);
-            cmbTileServers.SelectedIndex = 0;
+            cmbTileServers.SelectedIndex = 2;
             mapControl.Tracks.Add(bingLine);
         }
 
