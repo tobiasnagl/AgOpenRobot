@@ -2170,6 +2170,46 @@ namespace AgOpenGPS.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Openstreetmap_logo_svg120 {
+            get {
+                object obj = ResourceManager.GetObject("Openstreetmap_logo.svg120", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Openstreetmap_logo_svg60 {
+            get {
+                object obj = ResourceManager.GetObject("Openstreetmap_logo.svg60", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Openstreetmap_logo_svg65 {
+            get {
+                object obj = ResourceManager.GetObject("Openstreetmap_logo.svg65", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Openstreetmap_logo_svg70 {
+            get {
+                object obj = ResourceManager.GetObject("Openstreetmap_logo.svg70", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap OpManual {
             get {
                 object obj = ResourceManager.GetObject("OpManual", resourceCulture);

@@ -907,6 +907,10 @@
     <Content Include="Nav.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\Openstreetmap_logo.svg120.png" />
+    <None Include="Resources\Openstreetmap_logo.svg60.png" />
+    <None Include="Resources\Openstreetmap_logo.svg70.png" />
+    <None Include="Resources\Openstreetmap_logo.svg65.png" />
     <Content Include="Resources\rtk_lost.wav" />
     <None Include="btnImages\BrightnessDn.png" />
     <None Include="btnImages\BrightnessUp.png" />
