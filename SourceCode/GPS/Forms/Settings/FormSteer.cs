@@ -1046,6 +1046,11 @@ namespace AgOpenGPS
             Properties.Settings.Default.Save();
         }
 
+        private void cboxMotorDrive_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
         private void cboxConv_HelpRequested(object sender, HelpEventArgs hlpevent)
         {
             MessageBox.Show(gStr.hc_cboxConv, gStr.gsHelp);

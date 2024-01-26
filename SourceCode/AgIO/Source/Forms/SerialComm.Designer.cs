@@ -5,6 +5,9 @@ using System;
 using System.Windows.Forms;
 using System.Linq;
 using System.Globalization;
+using System.Net.Sockets;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace AgIO
 {
@@ -31,6 +34,11 @@ namespace AgIO
         public  static string portNameMachineModule = "***";
         public  static int baudRateMachineModule = 38400;
 
+        //TCP 
+
+        public static string tcpserver = "172.16.221.250";
+        public static int tcpport = 6;
+
         //public  static string portNameModule3 = "***";
         //public  static int baudRateModule3 = 38400;
 
@@ -54,6 +62,13 @@ namespace AgIO
         public bool wasSteerModuleConnectedLastRun = false;
         public bool wasIMUConnectedLastRun = false;
         public bool wasRtcmConnectedLastRun = false;
+
+
+
+
+
+
+
 
         //serial port gps is connected to
         public SerialPort spGPS = new SerialPort(portNameGPS, baudRateGPS, Parity.None, 8, StopBits.One);
@@ -930,6 +945,7 @@ namespace AgIO
         //}
         #endregion
 
+
         #region GPS SerialPort --------------------------------------------------------------------------
 
         public void SendGPSPort(byte[] data)
@@ -1024,18 +1040,30 @@ namespace AgIO
         }
 
         //serial port receive in its own thread
-        private void sp_DataReceivedGPS(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
+        private async void sp_DataReceivedGPS(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
-            if (spGPS.IsOpen)
+            try
             {
-                try
+                TcpClient client = new TcpClient(tcpserver, tcpport);
+
+                NetworkStream stream = client.GetStream();
+                StreamReader reader = new StreamReader(stream);
+
+                // Empfangen der Daten vom Server
+
+                await Task.Run(async () =>
                 {
-                    string sentence = spGPS.ReadExisting();
-                    BeginInvoke((MethodInvoker)(() => ReceiveGPSPort(sentence)));
-                }
-                catch (Exception)
-                {
-                }
+                    while (true)
+                    {
+                        string sentence = await reader.ReadToEndAsync();
+                        BeginInvoke((MethodInvoker)(() => ReceiveGPSPort(sentence)));
+                    }
+                });
+                //string sentence = spGPS.ReadExisting();
+                //BeginInvoke((MethodInvoker)(() => ReceiveGPSPort(sentence)));
+            }
+            catch (Exception)
+            {
             }
         }
         #endregion SerialPortGPS
@@ -1189,4 +1217,4 @@ namespace AgIO
             wasRtcmConnectedLastRun = false;
         }
     }//end class
-}//end namespace
+}
