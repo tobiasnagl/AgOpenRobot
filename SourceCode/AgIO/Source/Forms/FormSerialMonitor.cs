@@ -147,6 +147,7 @@ namespace AgIO
         private void btnOpenSerial_Click(object sender, EventArgs e)
         {
             OpenPort();
+            
             if (sp.IsOpen)
             {
                 cboxBaud.Enabled = false;

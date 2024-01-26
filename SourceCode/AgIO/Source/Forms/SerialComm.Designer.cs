@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Net.Sockets;
 using System.IO;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace AgIO
 {
@@ -1044,27 +1045,29 @@ namespace AgIO
         {
             try
             {
-                TcpClient client = new TcpClient(tcpserver, tcpport);
-
-                NetworkStream stream = client.GetStream();
-                StreamReader reader = new StreamReader(stream);
-
-                // Empfangen der Daten vom Server
-
-                await Task.Run(async () =>
+                using (var client = new TcpClient())
                 {
-                    while (true)
+                    // Verbindung zum Server herstellen
+                    await client.ConnectAsync(tcpserver, tcpport);
+
+
+                    using (NetworkStream stream = client.GetStream())
                     {
-                        string sentence = await reader.ReadToEndAsync();
-                        BeginInvoke((MethodInvoker)(() => ReceiveGPSPort(sentence)));
+
+                        // Antwort vom Server empfangen
+                        byte[] buffer = new byte[1024];
+                        int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+                        string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                        BeginInvoke((MethodInvoker)(() => ReceiveGPS2Port(response)));
+
                     }
-                });
-                //string sentence = spGPS.ReadExisting();
-                //BeginInvoke((MethodInvoker)(() => ReceiveGPSPort(sentence)));
+                }
             }
             catch (Exception)
             {
+                Console.WriteLine("Fehler: ");
             }
+
         }
         #endregion SerialPortGPS
 

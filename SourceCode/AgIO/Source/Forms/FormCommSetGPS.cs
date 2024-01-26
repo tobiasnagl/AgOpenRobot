@@ -203,31 +203,24 @@ namespace AgIO
         {
 
 
-            try
-            {
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Fehler: {ex.Message}");
-            }
             mf.OpenGPSPort();
-            //if (mf.spGPS.IsOpen)
-            //{
-            //    cboxBaud.Enabled = false;
-            //    cboxPort.Enabled = false;
-            //    btnCloseSerial.Enabled = true;
-            //    btnOpenSerial.Enabled = false;
-            //    lblCurrentBaud.Text = mf.spGPS.BaudRate.ToString();
-            //    lblCurrentPort.Text = mf.spGPS.PortName;
-            //}
-            //else
-            //{
-            //    cboxBaud.Enabled = true;
-            //    cboxPort.Enabled = true;
-            //    btnCloseSerial.Enabled = false;
-            //    btnOpenSerial.Enabled = true;
-            //    MessageBox.Show("Unable to connect to Port");
-            //}
+            if (mf.spGPS.IsOpen)
+            {
+                cboxBaud.Enabled = false;
+                cboxPort.Enabled = false;
+                btnCloseSerial.Enabled = true;
+                btnOpenSerial.Enabled = false;
+                //lblCurrentBaud.Text = mf.spGPS.BaudRate.ToString();
+                //lblCurrentPort.Text = mf.spGPS.PortName;
+            }
+            else
+            {
+                cboxBaud.Enabled = true;
+                cboxPort.Enabled = true;
+                btnCloseSerial.Enabled = false;
+                btnOpenSerial.Enabled = true;
+                MessageBox.Show("Unable to connect to Port");
+            }
         }
 
         private void btnCloseSerial_Click(object sender, EventArgs e)
