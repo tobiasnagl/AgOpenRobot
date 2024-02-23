@@ -121,6 +121,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\alphaCalculation.cs" />
+    <Compile Include="Classes\CABRobot.cs" />
     <Compile Include="Classes\CBrightness.cs" />
     <Compile Include="Classes\CExtensionMethods.cs" />
     <Compile Include="Classes\CFence.cs">
@@ -165,6 +167,7 @@
       <DependentUpon>CBoundaryList.cs</DependentUpon>
     </Compile>
     <Compile Include="Classes\CTool.cs" />
+    <Compile Include="Classes\ROBOT_vector.cs" />
     <Compile Include="CustomControl1.cs">
       <SubType>Component</SubType>
     </Compile>
