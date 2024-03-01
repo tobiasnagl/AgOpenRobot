@@ -31,12 +31,12 @@ namespace AgOpenGPS.Classes
         private int counter;
 
 
-       
-        
+
+
         /// <summary>
         /// NEEDED FOR ROBOT
         /// </summary>
-        private (short,short) DoSteerAngleCalc()
+        private (short, short) DoSteerAngleCalc()
         {
             if (mf.isReverse) steerHeadingError *= -1;
             //Overshoot setting on Stanley tab
@@ -66,15 +66,12 @@ namespace AgOpenGPS.Classes
 
             //pivot PID
             pivotDistanceError = (pivotDistanceError * 0.6) + (distanceFromCurrentLinePivot * 0.4);
-            //pivotDistanceError = Math.Atan((distanceFromCurrentLinePivot) / (sped)) * 0.2;
-            //pivotErrorTotal = pivotDistanceError + pivotDerivative;
 
             if (mf.avgSpeed > 1
                 && mf.isAutoSteerBtnOn
                 && Math.Abs(derivativeDistError) < 1
                 && Math.Abs(pivotDistanceError) < 0.25)
             {
-                //if over the line heading wrong way, rapidly decrease integral
                 if ((inty < 0 && distanceFromCurrentLinePivot < 0) || (inty > 0 && distanceFromCurrentLinePivot > 0))
                 {
                     inty += pivotDistanceError * mf.vehicle.stanleyIntegralGainAB * -0.03;
@@ -84,23 +81,20 @@ namespace AgOpenGPS.Classes
                     inty += pivotDistanceError * mf.vehicle.stanleyIntegralGainAB * -0.01;
                 }
 
-                //integral slider is set to 0
                 if (mf.vehicle.stanleyIntegralGainAB == 0) inty = 0;
             }
             else inty *= 0.7;
 
             if (mf.isReverse) inty = 0;
 
-            if (mf.ahrs.imuRoll != 88888)
-                steerAngleGu += mf.ahrs.imuRoll;
-
+            // Enforce limits based on the vehicle's maximum steer angle
             if (steerAngleGu < -mf.vehicle.maxSteerAngle) steerAngleGu = -mf.vehicle.maxSteerAngle;
             else if (steerAngleGu > mf.vehicle.maxSteerAngle) steerAngleGu = mf.vehicle.maxSteerAngle;
 
             //used for smooth mode 
             mf.vehicle.modeActualXTE = (distanceFromCurrentLinePivot);
 
-            //Convert to millimeters from meters
+            //Convert to millimeters from meters for the guidance line distance off and steer angle
             mf.guidanceLineDistanceOff = (short)Math.Round(distanceFromCurrentLinePivot * 1000.0, MidpointRounding.AwayFromZero);
             mf.guidanceLineSteerAngle = (short)(steerAngleGu * 100);
 

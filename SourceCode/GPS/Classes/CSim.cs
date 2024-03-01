@@ -1,6 +1,7 @@
 ﻿using AgOpenGPS.Classes;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,81 +24,129 @@ namespace AgOpenGPS
 
         public bool isAccelForward, isAccelBack;
 
+        private bool isTCPset =  true;
+        private string filepath = @"C:\Users\gabriel.steinwander\Desktop\data.csv";
+        private int lastIndex = 0;
+
         public List<ROBOT_vector> coordinates = new List<ROBOT_vector>() {  };
         #endregion properties sim
 
         public async Task<string> RecieveData()
         {
-
-            // Server-Adresse und Port
-            string server = "172.16.221.250";
-            int port = 6;
-
-            try
+            if (isTCPset)
             {
-                // Erstelle einen neuen TCP-Client
-                using (var client = new TcpClient(server, port))
+                string server = "172.16.221.250";
+                int port = 6;
+
+                try
                 {
-                    // Erhalte den Stream zum Lesen und Schreiben von Daten
-                    NetworkStream stream = client.GetStream();
-
-                    byte[] buffer = new byte[256]; // Puffer für empfangene Daten
-                    int numberOfBytesRead;
-
-                    Console.WriteLine("Verbunden mit dem Server. Warte auf Daten...");
-
-                    // Schleife, die Daten empfängt, solange die Verbindung offen ist
-
-                    // Initialisiere den Puffer
-                    StringBuilder responseData = new StringBuilder();
-
-                    // Lies Daten vom Server
-                    if ((numberOfBytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) != 0)
+                    // Erstelle einen neuen TCP-Client
+                    using (var client = new TcpClient(server, port))
                     {
-                        // Konvertiere die Daten von Bytes in einen String
-                        responseData.Append(Encoding.ASCII.GetString(buffer, 0, numberOfBytesRead));
-                        Console.WriteLine("Empfangen: {0}", responseData.ToString());
-                        var splitData = responseData.ToString().Split('\n');
-                        foreach (var item in splitData)
-                        {
-                            var moretemp = ParseReceiveData(item);
-                            if (moretemp.Item1 > 0 && moretemp.Item2 > 0)
-                            {
-                                this.latitude1 = moretemp.Item1;
-                                this.longitude1 = moretemp.Item2;
-                                var coord = new ROBOT_vector { X = moretemp.Item1, Y = moretemp.Item2 };
-                                //coordinates.Add(coord);
-                                coordinates.Add(new ROBOT_vector() { Y=48.12, X=15.12});
-                                coordinates.Add(new ROBOT_vector() { Y = 48.121, X = 15.121 });
-                                coordinates.Add(new ROBOT_vector() { Y = 48.122, X = 15.122 });
+                        // Erhalte den Stream zum Lesen und Schreiben von Daten
+                        NetworkStream stream = client.GetStream();
 
-                                //if (coordinates.Count >= 10)
-                                //{
-                                //    coordinates.RemoveAt(0);
-                                //}
-                                Console.WriteLine(moretemp);
+                        byte[] buffer = new byte[256]; // Puffer für empfangene Daten
+                        int numberOfBytesRead;
+
+                        Console.WriteLine("Verbunden mit dem Server. Warte auf Daten...");
+
+                        // Schleife, die Daten empfängt, solange die Verbindung offen ist
+
+                        // Initialisiere den Puffer
+                        StringBuilder responseData = new StringBuilder();
+
+                        // Lies Daten vom Server
+                        if ((numberOfBytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) != 0)
+                        {
+                            // Konvertiere die Daten von Bytes in einen String
+                            responseData.Append(Encoding.ASCII.GetString(buffer, 0, numberOfBytesRead));
+                            Console.WriteLine("Empfangen: {0}", responseData.ToString());
+                            var splitData = responseData.ToString().Split('\n');
+                            foreach (var item in splitData)
+                            {
+                                var moretemp = ParseReceiveData(item);
+                                if (moretemp.Item1 > 0 && moretemp.Item2 > 0)
+                                {
+                                    this.latitude1 = moretemp.Item1;
+                                    this.longitude1 = moretemp.Item2;
+                                    var coord = new ROBOT_vector { X = moretemp.Item1, Y = moretemp.Item2 };
+                                    //coordinates.Add(coord);
+                                    coordinates.Add(new ROBOT_vector() { Y = 48.12, X = 15.12 });
+                                    coordinates.Add(new ROBOT_vector() { Y = 48.121, X = 15.121 });
+                                    coordinates.Add(new ROBOT_vector() { Y = 48.122, X = 15.122 });
+
+                                    if (coordinates.Count >= 10)
+                                    {
+                                        coordinates.RemoveAt(0);
+                                    }
+                                    Console.WriteLine(moretemp);
+                                }
                             }
                         }
+                        if (!(coordinates.Count <= 2))
+                        {
+                            calculateAlpha();
+                        }
+                        // Schließe den Stream und den Client
+                        stream.Close();
                     }
+
+                }
+                catch (ArgumentNullException e)
+                {
+                    Console.WriteLine("ArgumentNullException: {0}", e);
+                }
+                catch (SocketException e)
+                {
+                    Console.WriteLine("SocketException: {0}", e);
+                }
+                return "";
+            }
+            else
+            {
+                var text = File.ReadAllLines(filepath);
+                var lat = double.Parse(text[lastIndex].Split(';')[0]);
+                var lon = double.Parse(text[lastIndex].Split(';')[1]);
+
+                await Console.Out.WriteLineAsync($"{lat}     {lon}");
+                if (lastIndex < 99)
+                {
+                    lastIndex++;
+                }
+                else
+                {
+                    lastIndex = 0;
+                }
+
+                if (lat > 0 && lon > 0)
+                {
+                    this.latitude1 = lat;
+                    this.longitude1 = lon;
+                    var coord = new ROBOT_vector { X = lat, Y = lon };
+                    coordinates.Add(coord);
+                    //coordinates.Add(new ROBOT_vector() { Y = 48.12, X = 15.12 });
+                    //coordinates.Add(new ROBOT_vector() { Y = 48.121, X = 15.121 });
+                    //coordinates.Add(new ROBOT_vector() { Y = 48.122, X = 15.122 });
+
+                    if (coordinates.Count >= 10)
+                    {
+                        coordinates.RemoveAt(0);
+                    }
+
                     if (!(coordinates.Count <= 2))
                     {
-                    calculateAlpha();
+                        calculateAlpha();
                     }
-                    // Schließe den Stream und den Client
-                    stream.Close();
+
+
+                    //Console.WriteLine(moretemp);
                 }
-                
+                return "";
+
             }
-            catch (ArgumentNullException e)
-            {
-                Console.WriteLine("ArgumentNullException: {0}", e);
-            }
-            catch (SocketException e)
-            {
-                Console.WriteLine("SocketException: {0}", e);
-            }
-            return "";
         }
+ 
 
         
 
