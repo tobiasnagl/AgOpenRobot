@@ -24,11 +24,11 @@ namespace AgOpenGPS
 
         public bool isAccelForward, isAccelBack;
 
-        private bool isTCPset =  true;
+        private bool isTCPset =  false;
         private string filepath = @"C:\Users\gabriel.steinwander\Desktop\data.csv";
-        private int lastIndex = 0;
 
         public List<ROBOT_vector> coordinates = new List<ROBOT_vector>() {  };
+        private int lastLine = 0;
         #endregion properties sim
 
         public async Task<string> RecieveData()
@@ -71,10 +71,10 @@ namespace AgOpenGPS
                                     this.latitude1 = moretemp.Item1;
                                     this.longitude1 = moretemp.Item2;
                                     var coord = new ROBOT_vector { X = moretemp.Item1, Y = moretemp.Item2 };
-                                    //coordinates.Add(coord);
-                                    coordinates.Add(new ROBOT_vector() { Y = 48.12, X = 15.12 });
-                                    coordinates.Add(new ROBOT_vector() { Y = 48.121, X = 15.121 });
-                                    coordinates.Add(new ROBOT_vector() { Y = 48.122, X = 15.122 });
+                                    coordinates.Add(coord);
+                                    //coordinates.Add(new ROBOT_vector() { Y = 48.12, X = 15.12 });
+                                    //coordinates.Add(new ROBOT_vector() { Y = 48.121, X = 15.121 });
+                                    //coordinates.Add(new ROBOT_vector() { Y = 48.122, X = 15.122 });
 
                                     if (coordinates.Count >= 10)
                                     {
@@ -105,30 +105,24 @@ namespace AgOpenGPS
             }
             else
             {
-                var text = File.ReadAllLines(filepath);
-                var lat = double.Parse(text[lastIndex].Split(';')[0]);
-                var lon = double.Parse(text[lastIndex].Split(';')[1]);
+                var lines = File.ReadAllLines(filepath);
+                double lat;
+                double lon;
+                string line = lines[lastLine];
+                
+                var coord = line.Split(';');
+                lon = double.Parse(coord[0]);
+                lat = double.Parse(coord[1]);
 
                 await Console.Out.WriteLineAsync($"{lat}     {lon}");
-                if (lastIndex < 99)
-                {
-                    lastIndex++;
-                }
-                else
-                {
-                    lastIndex = 0;
-                }
+                   
 
                 if (lat > 0 && lon > 0)
                 {
                     this.latitude1 = lat;
                     this.longitude1 = lon;
-                    var coord = new ROBOT_vector { X = lat, Y = lon };
-                    coordinates.Add(coord);
-                    //coordinates.Add(new ROBOT_vector() { Y = 48.12, X = 15.12 });
-                    //coordinates.Add(new ROBOT_vector() { Y = 48.121, X = 15.121 });
-                    //coordinates.Add(new ROBOT_vector() { Y = 48.122, X = 15.122 });
-
+                    var coordinate = new ROBOT_vector { X = lat, Y = lon };
+                    coordinates.Add(coordinate);
                     if (coordinates.Count >= 10)
                     {
                         coordinates.RemoveAt(0);
@@ -138,10 +132,9 @@ namespace AgOpenGPS
                     {
                         calculateAlpha();
                     }
-
-
-                    //Console.WriteLine(moretemp);
+                    
                 }
+                lastLine++;
                 return "";
 
             }
