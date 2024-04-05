@@ -123,6 +123,7 @@
   <ItemGroup>
     <Compile Include="Classes\alphaCalculation.cs" />
     <Compile Include="Classes\CABRobot.cs" />
+    <Compile Include="Classes\CAB_sendData_postProcess.cs" />
     <Compile Include="Classes\CBrightness.cs" />
     <Compile Include="Classes\CExtensionMethods.cs" />
     <Compile Include="Classes\CFence.cs">

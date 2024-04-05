@@ -24,7 +24,7 @@ namespace AgOpenGPS
 
         public bool isAccelForward, isAccelBack;
 
-        private bool isTCPset =  false;
+        private bool isTCPset =  true;
         private string filepath = @"C:\Users\gabriel.steinwander\Desktop\data.csv";
 
         public List<ROBOT_vector> coordinates = new List<ROBOT_vector>() {  };
