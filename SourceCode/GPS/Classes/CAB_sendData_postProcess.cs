@@ -16,14 +16,17 @@ namespace AgOpenGPS.Classes
         public CAB_sendData_postProcess()
         {
             Port = 8585;
-            ;
         }
 
         public int Port { get; set; }
 
         public void encodeData(double angle)
         {
-            send_data(angle.ToString());
+            send_data("angle:"+angle.ToString());
+        }
+        public void stepDistance(double stepDistance)
+        {
+            send_data("step:"+stepDistance.ToString());
         }
 
         private void send_data(string message)
