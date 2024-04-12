@@ -29,6 +29,7 @@ namespace AgOpenGPS
 
         public List<ROBOT_vector> coordinates = new List<ROBOT_vector>() {  };
         private int lastLine = 0;
+        //private CAB_sendData_postProcess cAB_SendData_PostProcess = new CAB_sendData_postProcess();
         #endregion properties sim
 
         public async Task<string> RecieveData()
@@ -249,6 +250,10 @@ namespace AgOpenGPS
                 stepDistance -= 0.01;
                 if (stepDistance < -0.06) isAccelBack = false;
             }
+            //Send Step Distance
+            CAB_sendData_postProcess.Instance.Step = stepDistance;
+            CAB_sendData_postProcess.Instance.sendData();
+
         }
 
         public void CalculateNewPostionFromBearingDistance(double lat, double lng, double bearing, double distance)

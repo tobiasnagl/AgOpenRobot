@@ -70,7 +70,7 @@ namespace AgOpenGPS
         //pointers to mainform controls
         private readonly FormGPS mf;
 
-        private CAB_sendData_postProcess CAB_sendData_postProcess = new CAB_sendData_postProcess();
+        //private CAB_sendData_postProcess CAB_sendData_postProcess = new CAB_sendData_postProcess();
 
         public CABLine(FormGPS _f)
         {
@@ -270,8 +270,9 @@ namespace AgOpenGPS
                     + ((goalPointAB.northing - pivot.northing) * Math.Sin(localHeading))) * mf.vehicle.wheelbase
                     / goalPointDistanceDSquared));
                 //Send Data to Arduino
-                CAB_sendData_postProcess.encodeData(steerAngleAB);
-                Console.WriteLine($"WICHTIG!!!!!!!\n\nSteer Angle: {steerAngleAB}");
+                CAB_sendData_postProcess.Instance.Angle = steerAngleAB;
+                CAB_sendData_postProcess.Instance.sendData();
+                //Console.WriteLine($"WICHTIG!!!!!!!\n\nSteer Angle: {steerAngleAB}");
                 if (mf.ahrs.imuRoll != 88888)
                     steerAngleAB += mf.ahrs.imuRoll * -mf.gyd.sideHillCompFactor;
 
