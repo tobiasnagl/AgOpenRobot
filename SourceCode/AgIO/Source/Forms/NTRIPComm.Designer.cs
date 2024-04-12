@@ -579,6 +579,7 @@ namespace AgIO
                     clientSocket.BeginReceive(casterRecBuffer, 0, casterRecBuffer.Length, SocketFlags.None, new AsyncCallback(OnRecievedData), null);
             }
             catch (Exception)
+
             {
                 //MessageBox.Show(ex.Message, "Unusual error during Connect!");
             }

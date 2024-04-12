@@ -1,4 +1,8 @@
 ﻿using System;
+using System.IO;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AgIO
@@ -195,8 +199,10 @@ namespace AgIO
             FormLoop.portNameGPS2 = cboxPort2.Text;
         }
 
-        private void btnOpenSerial_Click(object sender, EventArgs e)
+        private async void btnOpenSerial_Click(object sender, EventArgs e)
         {
+
+
             mf.OpenGPSPort();
             if (mf.spGPS.IsOpen)
             {
@@ -204,8 +210,8 @@ namespace AgIO
                 cboxPort.Enabled = false;
                 btnCloseSerial.Enabled = true;
                 btnOpenSerial.Enabled = false;
-                lblCurrentBaud.Text = mf.spGPS.BaudRate.ToString();
-                lblCurrentPort.Text = mf.spGPS.PortName;
+                //lblCurrentBaud.Text = mf.spGPS.BaudRate.ToString();
+                //lblCurrentPort.Text = mf.spGPS.PortName;
             }
             else
             {

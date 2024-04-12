@@ -5,6 +5,10 @@ using System;
 using System.Windows.Forms;
 using System.Linq;
 using System.Globalization;
+using System.Net.Sockets;
+using System.IO;
+using System.Threading.Tasks;
+using System.Text;
 
 namespace AgIO
 {
@@ -31,6 +35,11 @@ namespace AgIO
         public  static string portNameMachineModule = "***";
         public  static int baudRateMachineModule = 38400;
 
+        //TCP 
+
+        public static string tcpserver = "172.16.221.250";
+        public static int tcpport = 6;
+
         //public  static string portNameModule3 = "***";
         //public  static int baudRateModule3 = 38400;
 
@@ -54,6 +63,13 @@ namespace AgIO
         public bool wasSteerModuleConnectedLastRun = false;
         public bool wasIMUConnectedLastRun = false;
         public bool wasRtcmConnectedLastRun = false;
+
+
+
+
+
+
+
 
         //serial port gps is connected to
         public SerialPort spGPS = new SerialPort(portNameGPS, baudRateGPS, Parity.None, 8, StopBits.One);
@@ -930,6 +946,7 @@ namespace AgIO
         //}
         #endregion
 
+
         #region GPS SerialPort --------------------------------------------------------------------------
 
         public void SendGPSPort(byte[] data)
@@ -1024,19 +1041,33 @@ namespace AgIO
         }
 
         //serial port receive in its own thread
-        private void sp_DataReceivedGPS(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
+        private async void sp_DataReceivedGPS(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
-            if (spGPS.IsOpen)
+            try
             {
-                try
+                using (var client = new TcpClient())
                 {
-                    string sentence = spGPS.ReadExisting();
-                    BeginInvoke((MethodInvoker)(() => ReceiveGPSPort(sentence)));
-                }
-                catch (Exception)
-                {
+                    // Verbindung zum Server herstellen
+                    await client.ConnectAsync(tcpserver, tcpport);
+
+
+                    using (NetworkStream stream = client.GetStream())
+                    {
+
+                        // Antwort vom Server empfangen
+                        byte[] buffer = new byte[1024];
+                        int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+                        string response = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                        BeginInvoke((MethodInvoker)(() => ReceiveGPS2Port(response)));
+
+                    }
                 }
             }
+            catch (Exception)
+            {
+                Console.WriteLine("Fehler: ");
+            }
+
         }
         #endregion SerialPortGPS
 
@@ -1189,4 +1220,4 @@ namespace AgIO
             wasRtcmConnectedLastRun = false;
         }
     }//end class
-}//end namespace
+}

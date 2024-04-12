@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using AgOpenGPS.Classes;
+using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 
@@ -69,6 +70,8 @@ namespace AgOpenGPS
         //pointers to mainform controls
         private readonly FormGPS mf;
 
+        //private CAB_sendData_postProcess CAB_sendData_postProcess = new CAB_sendData_postProcess();
+
         public CABLine(FormGPS _f)
         {
             //constructor
@@ -76,6 +79,8 @@ namespace AgOpenGPS
             //isOnTramLine = true;
             lineWidth = Properties.Settings.Default.setDisplay_lineWidth;
             abLength = Properties.Settings.Default.setAB_lineLength;
+
+
         }
 
         double shadowOffset = 0;
@@ -264,7 +269,10 @@ namespace AgOpenGPS
                 steerAngleAB = glm.toDegrees(Math.Atan(2 * (((goalPointAB.easting - pivot.easting) * Math.Cos(localHeading))
                     + ((goalPointAB.northing - pivot.northing) * Math.Sin(localHeading))) * mf.vehicle.wheelbase
                     / goalPointDistanceDSquared));
-
+                //Send Data to Arduino
+                CAB_sendData_postProcess.Instance.Angle = steerAngleAB;
+                CAB_sendData_postProcess.Instance.sendData();
+                //Console.WriteLine($"WICHTIG!!!!!!!\n\nSteer Angle: {steerAngleAB}");
                 if (mf.ahrs.imuRoll != 88888)
                     steerAngleAB += mf.ahrs.imuRoll * -mf.gyd.sideHillCompFactor;
 
